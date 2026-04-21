@@ -244,9 +244,26 @@ export function transformLink(src: FullSlug, target: string, opts: TransformOpti
         return targetCanonical === fileName
       })
 
-      // only match, just use it
-      if (matchingFileNames.length === 1) {
-        const targetSlug = matchingFileNames[0]
+      if (matchingFileNames.length >= 1) {
+        // When a filename exists in multiple folders (e.g. an Obsidian pasted
+        // image that lives in both a note's folder and a symlinked mirror of
+        // that folder), prefer the match whose folder shares the longest path
+        // with the current note. Breaks ties by shortest overall slug.
+        const srcFolder = src.split("/").slice(0, -1)
+        const scored = matchingFileNames.map((slug) => {
+          const slugFolder = slug.split("/").slice(0, -1)
+          let common = 0
+          while (
+            common < srcFolder.length &&
+            common < slugFolder.length &&
+            srcFolder[common] === slugFolder[common]
+          ) {
+            common++
+          }
+          return { slug, common }
+        })
+        scored.sort((a, b) => b.common - a.common || a.slug.length - b.slug.length)
+        const targetSlug = scored[0].slug
         return (resolveRelative(src, targetSlug) + targetAnchor) as RelativeURL
       }
     }
