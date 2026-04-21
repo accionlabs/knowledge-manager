@@ -9,8 +9,12 @@ private/
 .replit
 replit.nix
 
-# content/ is a local symlink to the developer's Obsidian vault — never commit
-content
+# NOTE: the `content/` symlink is intentionally NOT listed here.
+# Quartz's build uses globby with { gitignore: true }, which treats anything
+# matched by .gitignore as off-limits even when reached via a symlink, so
+# ignoring `content` here breaks the build. Local devs should add `content`
+# to .git/info/exclude (set up by the build/dev script) to keep their
+# personal vault symlink out of git without affecting the build.
 
 # macOS app bundle output
 dist/
