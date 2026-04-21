@@ -12,13 +12,78 @@
       <img src="icon.svg" alt="" class="brand-icon" />
       <h1>Knowledge Manager</h1>
       <p class="tagline">
-        Render your Obsidian vault as a browsable, print-friendly website. Mac-native app, one click to start.
+        Render your Obsidian vault as a browsable, print-friendly website. One command to install and run on a Mac.
       </p>
     </header>
 
-    <section class="downloads" id="download">
-      <h2>Download</h2>
-      <p class="muted">Pick the build that matches your Mac. Requires macOS 11 or later.</p>
+    <section class="install" id="install">
+      <h2>Install &amp; run</h2>
+      <p class="muted">Paste this into <strong>Terminal</strong> (Applications → Utilities → Terminal):</p>
+      <div class="code-hero">
+        <pre><code id="install-cmd">curl -fsSL https://accionlabs.github.io/knowledge-manager/install.sh | bash</code></pre>
+        <button class="copy-btn" data-copy-target="install-cmd">Copy</button>
+      </div>
+      <p class="muted small">
+        On first run, it installs Node.js in your user profile (no admin needed), clones the repo into
+        <code>~/knowledge-manager/</code>, installs dependencies (~1 min), prompts for your Obsidian vault folder,
+        and opens the site in your browser. <br />
+        On subsequent runs it just starts the server. Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+      </p>
+    </section>
+
+    <section class="usage">
+      <h2>Daily use</h2>
+      <ol>
+        <li>Open Terminal.</li>
+        <li>Run the same install command again (or <code>bash ~/knowledge-manager/site/install.sh</code>).</li>
+        <li>Browser opens automatically at <code>http://localhost:8080</code> (or the next free port).</li>
+        <li>When you're done, go back to Terminal and press <kbd>Ctrl</kbd>+<kbd>C</kbd>.</li>
+      </ol>
+      <dl>
+        <dt>Changing vault</dt>
+        <dd>Run <code>rm ~/knowledge-manager/.vault-path</code>, then re-run the install command. You'll be re-prompted.</dd>
+        <dt>Updating to latest</dt>
+        <dd>The install command runs <code>git pull</code> automatically on every run.</dd>
+        <dt>Where is everything?</dt>
+        <dd><code>~/knowledge-manager/</code> — source, <code>node_modules</code>, logs. Everything is in your home folder; no hidden library paths.</dd>
+      </dl>
+    </section>
+
+    <section class="troubleshooting">
+      <h2>Troubleshooting</h2>
+      <details>
+        <summary>"git: command not found"</summary>
+        <p>Install Apple's Command Line Tools (one-time, ~5 min):</p>
+        <pre><code>xcode-select --install</code></pre>
+      </details>
+      <details>
+        <summary>Port conflict</summary>
+        <p>
+          The script auto-picks a free port between <code>8080-8100</code> for HTTP and <code>3001-3100</code> for the
+          WebSocket live-reload. The actual port is printed in Terminal (<em>Running at http://localhost:XXXX</em>).
+        </p>
+      </details>
+      <details>
+        <summary>Vault folder was moved or renamed</summary>
+        <p>Reset and re-prompt:</p>
+        <pre><code>rm ~/knowledge-manager/.vault-path</code></pre>
+        <p>Then re-run the install command.</p>
+      </details>
+      <details>
+        <summary>Start from scratch</summary>
+        <p>Delete the install folder:</p>
+        <pre><code>rm -rf ~/knowledge-manager</code></pre>
+        <p>Then re-run the install command.</p>
+      </details>
+    </section>
+
+    <section class="experimental" id="app">
+      <h2>Experimental: macOS app bundle</h2>
+      <p class="muted">
+        An alternative one-click installer packaged as a Mac <code>.app</code>. Early builds had Gatekeeper friction and
+        port-debugging issues, so the script above is the recommended path for now. The app is still available if
+        you'd like to try it:
+      </p>
       <div class="download-grid">
         <a
           class="download-card"
@@ -38,81 +103,8 @@
         </a>
       </div>
       <p class="muted small">
-        Not sure which one? Click the Apple menu &rarr; About This Mac. If it says "Chip: Apple M&hellip;", pick Apple Silicon.
-        Otherwise pick Intel.
+        On first launch macOS may warn that the app is from an unidentified developer. Right-click the app → Open → Open.
       </p>
-    </section>
-
-    <section class="install">
-      <h2>Install</h2>
-      <ol>
-        <li>Unzip the download.</li>
-        <li>Drag <code>Knowledge Manager.app</code> into your <strong>Applications</strong> folder.</li>
-        <li>
-          <strong>Right-click</strong> the app &rarr; <strong>Open</strong>.
-          <span class="muted">(Needed once. The app isn't code-signed yet, so macOS needs permission.)</span>
-        </li>
-        <li>Click <strong>Open</strong> on the Gatekeeper dialog.</li>
-      </ol>
-    </section>
-
-    <section class="first-run">
-      <h2>First launch</h2>
-      <ol>
-        <li>Choose your Obsidian vault folder when prompted.</li>
-        <li>Dependencies install (one-time, ~2 min, needs internet).</li>
-        <li>Browser opens automatically at <code>http://localhost:8080</code>.</li>
-      </ol>
-    </section>
-
-    <section class="usage">
-      <h2>Daily use</h2>
-      <dl>
-        <dt>Start</dt>
-        <dd>Double-click <code>Knowledge Manager.app</code>.</dd>
-        <dt>See it's running</dt>
-        <dd>The app appears in the Dock while the server is active.</dd>
-        <dt>Stop</dt>
-        <dd>Right-click the Dock icon &rarr; <strong>Quit</strong>, or <kbd>&#8984;Q</kbd> while focused.</dd>
-        <dt>Re-open browser</dt>
-        <dd>Double-click the app while it's running — you'll get an <em>Open Browser / Stop</em> dialog.</dd>
-      </dl>
-    </section>
-
-    <section class="troubleshooting">
-      <h2>Troubleshooting</h2>
-      <details>
-        <summary>"Cannot verify the developer"</summary>
-        <p>Right-click the app &rarr; Open (not double-click) on first launch. This bypasses Gatekeeper for unsigned apps.</p>
-      </details>
-      <details>
-        <summary>"Knowledge Manager is damaged and can't be opened"</summary>
-        <p>
-          macOS sets a quarantine flag on anything downloaded through a browser. For unsigned apps it shows this misleading message.
-          Open Terminal and run:
-        </p>
-        <pre><code>xattr -cr "/Applications/Knowledge Manager.app"</code></pre>
-        <p>Then double-click the app normally. (Only affects older downloads; v1.0.1 and later ship with an ad-hoc signature that avoids this.)</p>
-      </details>
-      <details>
-        <summary>Server fails to start</summary>
-        <p>
-          Check the log at
-          <code>~/Library/Application Support/Knowledge Manager/server.log</code>.
-        </p>
-      </details>
-      <details>
-        <summary>Vault folder moved</summary>
-        <p>
-          Delete
-          <code>~/Library/Application Support/Knowledge Manager/vault.path</code>
-          and relaunch. You'll be asked to pick a new vault.
-        </p>
-      </details>
-      <details>
-        <summary>Reset everything</summary>
-        <p>Remove <code>~/Library/Application Support/Knowledge Manager/</code> and relaunch. All per-user state lives there.</p>
-      </details>
     </section>
 
     <footer>
@@ -122,5 +114,22 @@
         <a href="https://github.com/accionlabs/knowledge-manager">github.com/accionlabs/knowledge-manager</a>.
       </p>
     </footer>
+
+    <script>
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-copy-target");
+          const text = document.getElementById(id).textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            const original = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => (btn.textContent = original), 1500);
+          } catch (e) {
+            // clipboard access blocked; ignore
+          }
+        });
+      });
+    </script>
   </body>
 </html>
