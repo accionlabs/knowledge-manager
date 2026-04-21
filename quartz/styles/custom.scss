@@ -1,0 +1,130 @@
+@use "./base.scss";
+
+article > h1:first-child {
+  display: none;
+}
+
+table {
+  border-collapse: collapse;
+  border: 1px solid var(--gray);
+}
+
+th,
+td {
+  border: 1px solid var(--gray);
+  vertical-align: top;
+}
+
+.mermaid {
+  text-align: center;
+  margin: 1rem 0;
+  overflow: visible;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.mermaid svg,
+.mermaid svg * {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@media print {
+  .sidebar,
+  .sidebar.left,
+  .sidebar.right,
+  .toc,
+  .graph,
+  .backlinks,
+  .breadcrumb-container,
+  .content-meta,
+  footer,
+  .darkmode,
+  .readermode,
+  .search,
+  .page-title,
+  .explorer {
+    display: none !important;
+  }
+
+  .page > #quartz-body {
+    display: block !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    grid-template-areas: none !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .center {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    grid-area: auto !important;
+  }
+
+  .center > article,
+  article {
+    grid-area: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .page-header {
+    grid-area: auto !important;
+    margin: 0 0 1rem 0 !important;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  pre, blockquote, table, figure, img, .mermaid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .mermaid {
+    text-align: center;
+    overflow: visible !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .expand-button,
+  #mermaid-container {
+    display: none !important;
+  }
+
+  img, svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}
