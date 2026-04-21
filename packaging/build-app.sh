@@ -135,6 +135,15 @@ fi
 # ---------- Clear extended attributes that can trip Gatekeeper ----------
 xattr -cr "$APP_PATH" 2>/dev/null || true
 
+# ---------- Ad-hoc code sign ----------
+# Without a signature, macOS marks unsigned apps downloaded from the internet
+# as "damaged". An ad-hoc signature (identity "-") is enough to satisfy that
+# integrity check — users still need to right-click → Open for Gatekeeper's
+# unidentified-developer warning, but the app opens cleanly after that.
+echo "==> Ad-hoc signing bundle"
+codesign --force --deep --sign - --timestamp=none "$APP_PATH"
+codesign --verify --verbose=2 "$APP_PATH" 2>&1 | tail -3
+
 echo "==> Done"
 echo
 echo "App bundle: $APP_PATH"

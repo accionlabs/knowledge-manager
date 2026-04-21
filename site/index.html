@@ -86,6 +86,15 @@
         <p>Right-click the app &rarr; Open (not double-click) on first launch. This bypasses Gatekeeper for unsigned apps.</p>
       </details>
       <details>
+        <summary>"Knowledge Manager is damaged and can't be opened"</summary>
+        <p>
+          macOS sets a quarantine flag on anything downloaded through a browser. For unsigned apps it shows this misleading message.
+          Open Terminal and run:
+        </p>
+        <pre><code>xattr -cr "/Applications/Knowledge Manager.app"</code></pre>
+        <p>Then double-click the app normally. (Only affects older downloads; v1.0.1 and later ship with an ad-hoc signature that avoids this.)</p>
+      </details>
+      <details>
         <summary>Server fails to start</summary>
         <p>
           Check the log at
