@@ -112,6 +112,15 @@ export function createFileParser(ctx: BuildCtx, fps: FilePath[]) {
           console.log(`[markdown] ${fp} -> ${file.data.slug} (${perf.timeSince()})`)
         }
       } catch (err) {
+        // Tolerate files that existed during the initial glob but vanished
+        // before we could read them — common when an Obsidian vault is being
+        // synced by Google Drive / OneDrive / iCloud, which constantly create
+        // and delete transient files. Skip with a warning instead of killing
+        // the whole build.
+        if ((err as NodeJS.ErrnoException)?.code === "ENOENT") {
+          console.warn(`Skipping vanished file \`${fp}\``)
+          continue
+        }
         trace(`\nFailed to process markdown \`${fp}\``, err as Error)
       }
     }

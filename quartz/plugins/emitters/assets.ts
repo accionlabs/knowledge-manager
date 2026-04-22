@@ -21,7 +21,16 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
   const dir = path.dirname(dest) as FilePath
   await fs.promises.mkdir(dir, { recursive: true })
 
-  await fs.promises.copyFile(src, dest)
+  try {
+    await fs.promises.copyFile(src, dest)
+  } catch (err: any) {
+    // Tolerate transient files that vanished between glob and copy — e.g.
+    // LibreOffice lock files (.~lock.*.xlsx#), Drive/iCloud sync temps.
+    if (err?.code === "ENOENT") {
+      return dest
+    }
+    throw err
+  }
   return dest
 }
 

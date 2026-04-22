@@ -35,6 +35,18 @@ td {
 }
 
 @media print {
+  html,
+  body,
+  .page,
+  #quartz-root,
+  #quartz-body,
+  .center,
+  article {
+    background: #fff !important;
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+
   .sidebar,
   .sidebar.left,
   .sidebar.right,

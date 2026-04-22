@@ -21,6 +21,12 @@ const config: QuartzConfig = {
       ".obsidian",
       ".tmp.driveupload",
       ".tmp.drivedownload",
+      // Transient cloud-sync and office-lock files that come and go during
+      // normal editing — skip them entirely so the build doesn't churn or
+      // crash when one vanishes mid-process.
+      "**/.~lock*",
+      "**/~$*",
+      "**/.DS_Store",
     ],
     defaultDateType: "modified",
     theme: {
