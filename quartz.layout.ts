@@ -31,6 +31,16 @@ export const defaultContentPageLayout: PageLayout = {
     Component.Flex({
       components: [
         {
+          // Default: Quartz's built-in FlexSearch (zero deps, works offline).
+          //
+          // Optional: switch to qmd-powered semantic search by replacing
+          // this line with the variant below and starting the qmd-search
+          // server (see qmd-search/README.md and the project README).
+          //
+          //   Component: Component.Search({
+          //     backend: "qmd",
+          //     qmdEndpoint: "http://localhost:9090",
+          //   }),
           Component: Component.Search(),
           grow: true,
         },
@@ -56,6 +66,16 @@ export const defaultListPageLayout: PageLayout = {
     Component.Flex({
       components: [
         {
+          // Default: Quartz's built-in FlexSearch (zero deps, works offline).
+          //
+          // Optional: switch to qmd-powered semantic search by replacing
+          // this line with the variant below and starting the qmd-search
+          // server (see qmd-search/README.md and the project README).
+          //
+          //   Component: Component.Search({
+          //     backend: "qmd",
+          //     qmdEndpoint: "http://localhost:9090",
+          //   }),
           Component: Component.Search(),
           grow: true,
         },

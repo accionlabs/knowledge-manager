@@ -1,0 +1,155 @@
+:root {
+  --accion-red: #eb5b5a;
+  --dark: #2b2b2b;
+  --muted: #6b6b6b;
+  --border: #e5e5e5;
+  --bg: #fafafa;
+  --card: #fff;
+  --accent: #f0f0f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: var(--dark);
+  background: var(--bg);
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+header {
+  margin-bottom: 1.25rem;
+}
+
+header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+}
+
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+#search-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#q {
+  flex: 1;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  background: var(--card);
+}
+
+#q:focus {
+  outline: 2px solid var(--accion-red);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+#mode {
+  padding: 0.7rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  font: inherit;
+}
+
+#state {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+}
+
+#results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.result {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.result-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  justify-content: space-between;
+}
+
+.title {
+  color: var(--dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.title:hover {
+  color: var(--accion-red);
+}
+
+.score {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.path {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin: 0.15rem 0 0.4rem;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  word-break: break-all;
+}
+
+.context {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.snippet {
+  margin: 0.4rem 0 0;
+  padding: 0.55rem 0.7rem;
+  background: var(--accent);
+  border-radius: 6px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+
+footer {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+footer a {
+  color: var(--accion-red);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

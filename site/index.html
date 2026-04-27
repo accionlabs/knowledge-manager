@@ -77,6 +77,47 @@
       </details>
     </section>
 
+    <section class="optional" id="qmd">
+      <h2>Optional: semantic search</h2>
+      <p class="muted">
+        The default sidebar search is fast and works offline (Quartz's built-in keyword index). If you want
+        <strong>hybrid search</strong> — BM25 + vector embeddings + LLM rerank — over your notes, you can plug in
+        <a href="https://github.com/tobi/qmd" target="_blank" rel="noreferrer">tobi/qmd</a>. Useful if you have a large
+        vault and want natural-language queries like <em>"what did we decide about authentication?"</em>.
+      </p>
+
+      <h3>One-time setup</h3>
+      <pre><code># Install qmd globally
+npm install -g @tobilu/qmd
+
+# Index your vault (replace the path)
+qmd collection add "/path/to/your/Obsidian/vault" --name content
+
+# Generate embeddings (~5–10 min, downloads a GGUF model)
+qmd embed</code></pre>
+
+      <h3>Per-session: start the bridge server</h3>
+      <p class="muted">A tiny HTTP shim (in <code>~/knowledge-manager/qmd-search/</code>) translates between the Quartz UI and qmd's CLI. Leave this running in its own Terminal tab:</p>
+      <pre><code>cd ~/knowledge-manager/qmd-search
+node server.mjs</code></pre>
+
+      <h3>Switch the sidebar to qmd</h3>
+      <p class="muted">Edit <code>~/knowledge-manager/quartz.layout.ts</code> — find both occurrences of <code>Component.Search()</code> and replace with:</p>
+      <pre><code>Component.Search({
+  backend: "qmd",
+  qmdEndpoint: "http://localhost:9090",
+}),</code></pre>
+      <p class="muted small">
+        Restart Knowledge Manager. The sidebar search now queries qmd. If the bridge server isn't running, the
+        panel shows a friendly "qmd unreachable" message — no crash. To revert to FlexSearch, just remove the
+        argument.
+      </p>
+      <p class="muted small">
+        You can also use the standalone qmd-search UI at <code>http://localhost:9090</code> (served by the bridge
+        server) without touching Quartz at all.
+      </p>
+    </section>
+
     <section class="experimental" id="app">
       <h2>Experimental: macOS app bundle</h2>
       <p class="muted">

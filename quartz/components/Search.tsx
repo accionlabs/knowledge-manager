@@ -7,10 +7,22 @@ import { i18n } from "../i18n"
 
 export interface SearchOptions {
   enablePreview: boolean
+  /**
+   * Search backend. "flexsearch" is Quartz's built-in (BM25-ish, in-browser).
+   * "qmd" delegates to a running qmd-search HTTP server (see qmd-search/).
+   * Note: the qmd-search server must be running separately for "qmd" to work.
+   */
+  backend: "flexsearch" | "qmd"
+  /**
+   * Base URL of the qmd-search HTTP server. Only used when backend === "qmd".
+   */
+  qmdEndpoint: string
 }
 
 const defaultOptions: SearchOptions = {
   enablePreview: true,
+  backend: "flexsearch",
+  qmdEndpoint: "http://localhost:9090",
 }
 
 export default ((userOpts?: Partial<SearchOptions>) => {
@@ -18,7 +30,11 @@ export default ((userOpts?: Partial<SearchOptions>) => {
     const opts = { ...defaultOptions, ...userOpts }
     const searchPlaceholder = i18n(cfg.locale).components.search.searchBarPlaceholder
     return (
-      <div class={classNames(displayClass, "search")}>
+      <div
+        class={classNames(displayClass, "search")}
+        data-backend={opts.backend}
+        data-qmd-endpoint={opts.qmdEndpoint}
+      >
         <button class="search-button">
           <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7">
             <title>Search</title>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>QMD Search</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>QMD Search</h1>
+      <p class="muted" id="status">Connecting…</p>
+    </header>
+
+    <form id="search-form" autocomplete="off">
+      <input
+        id="q"
+        name="q"
+        type="search"
+        autofocus
+        placeholder="Ask a question or search for a topic…"
+      />
+      <select id="mode" title="Search mode">
+        <option value="query" selected>Hybrid (best)</option>
+        <option value="search">Keyword</option>
+        <option value="vsearch">Semantic</option>
+      </select>
+    </form>
+
+    <main>
+      <p class="muted" id="state">Type something to search.</p>
+      <ol id="results"></ol>
+    </main>
+
+    <footer>
+      <p class="muted small">
+        Backend:
+        <a href="https://github.com/tobi/qmd" target="_blank" rel="noreferrer">tobi/qmd</a>.
+        Click a result to open the rendered note in
+        <a href="http://localhost:8080" target="_blank">Knowledge Manager</a>
+        (must be running separately).
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

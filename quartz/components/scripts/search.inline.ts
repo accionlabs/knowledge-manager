@@ -497,11 +497,117 @@ async function setupSearch(searchElement: Element, currentSlug: FullSlug, data: 
   window.addCleanup(() => document.removeEventListener("keydown", shortcutHandler))
   searchButton.addEventListener("click", () => showSearch("basic"))
   window.addCleanup(() => searchButton.removeEventListener("click", () => showSearch("basic")))
-  searchBar.addEventListener("input", onType)
-  window.addCleanup(() => searchBar.removeEventListener("input", onType))
+  // ------------------------------------------------------------------
+  // qmd backend: optional alternative search backed by an external HTTP
+  // server (see qmd-search/). When the search element is annotated with
+  // data-backend="qmd", we replace the FlexSearch onType with a debounced
+  // fetch that talks to the qmd HTTP API. The result-card UI is reused so
+  // styling and keyboard nav still work.
+  // ------------------------------------------------------------------
+  const backend = (searchElement as HTMLElement).dataset.backend ?? "flexsearch"
+  const qmdEndpoint = (searchElement as HTMLElement).dataset.qmdEndpoint ?? ""
+
+  function cleanQmdSnippet(s: string): string {
+    if (!s) return ""
+    return s
+      .split("\n")
+      .filter((line) => !/^@@.*@@\s*\(.*\)$/.test(line))
+      .join("\n")
+      .trim()
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+  }
+
+  function qmdPathToSlug(qmdFile: string): FullSlug {
+    // qmd://<collection>/<rest>.md  →  <slugified rest>
+    const m = qmdFile.match(/^qmd:\/\/[^/]+\/(.+)$/)
+    let rel = m ? m[1] : qmdFile
+    rel = rel.replace(/\.md$/i, "")
+    const sluggedRel = rel
+      .split("/")
+      .map((seg) =>
+        seg
+          .replace(/\s/g, "-")
+          .replace(/&/g, "-and-")
+          .replace(/%/g, "-percent")
+          .replace(/\?/g, "")
+          .replace(/#/g, ""),
+      )
+      .join("/")
+    return sluggedRel as FullSlug
+  }
+
+  let qmdAbort: AbortController | null = null
+  let qmdDebounce: number | undefined
+  async function onTypeQmd(e: HTMLElementEventMap["input"]) {
+    if (!searchLayout) return
+    const term = (e.target as HTMLInputElement).value
+    currentSearchTerm = term
+    searchLayout.classList.toggle("display-results", term !== "")
+    if (term.trim() === "") {
+      removeAllChildren(results)
+      if (preview) removeAllChildren(preview)
+      return
+    }
+
+    window.clearTimeout(qmdDebounce)
+    qmdDebounce = window.setTimeout(async () => {
+      if (qmdAbort) qmdAbort.abort()
+      const ctrl = new AbortController()
+      qmdAbort = ctrl
+      try {
+        const u = new URL(qmdEndpoint)
+        u.pathname = "/api/search"
+        u.searchParams.set("q", term)
+        u.searchParams.set("mode", "search") // BM25 — fast enough for typing
+        u.searchParams.set("n", "20")
+        const res = await fetch(u, { signal: ctrl.signal })
+        const data = await res.json()
+        if (!res.ok) {
+          removeAllChildren(results)
+          results.innerHTML = `<a class="result-card no-match"><h3>qmd error</h3><p>${escapeHtml(
+            data.error ?? String(res.status),
+          )}</p></a>`
+          return
+        }
+        const finalResults: Item[] = (data.results ?? []).map((r: any, i: number) => ({
+          id: i,
+          slug: qmdPathToSlug(r.file ?? ""),
+          title: escapeHtml(r.title || (r.file?.split("/").pop() ?? "Untitled")),
+          content: escapeHtml(cleanQmdSnippet(r.snippet ?? "")),
+          tags: [],
+        }))
+        await displayResults(finalResults)
+      } catch (err: any) {
+        if (err?.name === "AbortError") return
+        removeAllChildren(results)
+        results.innerHTML = `<a class="result-card no-match"><h3>qmd unreachable</h3><p>Is the qmd-search server running at ${escapeHtml(
+          qmdEndpoint,
+        )}?</p></a>`
+      } finally {
+        if (qmdAbort === ctrl) qmdAbort = null
+      }
+    }, 250) as unknown as number
+  }
+
+  if (backend === "qmd" && qmdEndpoint) {
+    searchBar.addEventListener("input", onTypeQmd)
+    window.addCleanup(() => searchBar.removeEventListener("input", onTypeQmd))
+  } else {
+    searchBar.addEventListener("input", onType)
+    window.addCleanup(() => searchBar.removeEventListener("input", onType))
+  }
 
   registerEscapeHandler(container, hideSearch)
-  await fillDocument(data)
+  if (backend !== "qmd") {
+    await fillDocument(data)
+  }
 }
 
 /**
